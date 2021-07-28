@@ -3,6 +3,7 @@ import './App.css';
 import checkPalindrome from './checkPalindrome';
 import differenceInDates from './differenceInDates';
 import checkPrevNext from './checkPrevNext';
+import loading from './img/load.gif';
 
 const App = () => {
   const [ date, setDate ] = useState('yyyy-MM-dd');
@@ -12,24 +13,33 @@ const App = () => {
     setDate(e.target.value);
   }
 
+  const run = () => {
+    const result = checkPalindrome(date);
+    if(result[0]) {
+      setText(`Wohooo! your birthdate is a palindrome 👉 ${result[2][result[3]]} 👈 🥳🥳🎉✨`);
+    } else {
+      let otherwise = checkPrevNext(date);
+      let prevDate = differenceInDates(otherwise[0], date);
+      let nextDate = differenceInDates(date, otherwise[1]);
+
+      if(prevDate < nextDate) {
+        setText(`Wooops! Your birthdate is not a palindrome, the nearest palindrome date is ${otherwise[0]} and you missed it by just ${prevDate}`);
+      } else {
+        setText(`Wooops! Your birthdate is not a palindrome, the nearest palindrome date is ${otherwise[1]} and you missed it by just ${nextDate} days`);
+      }
+    }
+    document.getElementById('loading').style.display = 'none';
+  }
+
   const clickHandler = () => {
     if(date === 'yyyy-MM-dd') {
       setText('Please provide a valid date');
     } else {
-      const result = checkPalindrome(date);
-      if(result[0]) {
-        setText(`Wohooo! your birthdate is a palindrome 👉 ${result[2][result[3]]} 👈 🥳🥳🎉✨`);
-      } else {
-        let otherwise = checkPrevNext(date);
-        let prevDate = differenceInDates(otherwise[0], date);
-        let nextDate = differenceInDates(date, otherwise[1]);
+      setText('');
 
-        if(prevDate < nextDate) {
-          setText(`Wooops! Your birthdate is not a palindrome, the nearest palindrome date is ${otherwise[0]} and you missed it by just ${prevDate}`);
-        } else {
-          setText(`Wooops! Your birthdate is not a palindrome, the nearest palindrome date is ${otherwise[1]} and you missed it by just ${nextDate} days`);
-        }
-      }
+      document.getElementById('loading').style.display = 'block';
+
+      setTimeout(run, 2000);
     }
   }
 
@@ -48,6 +58,9 @@ const App = () => {
         </div>
         <button onClick={clickHandler}>Check</button>
         <div className="result">
+          <div id="loading">
+            <img src={loading} alt="" />
+          </div>
           <p>{text}</p>
         </div>
       </div>
